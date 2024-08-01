@@ -17,7 +17,8 @@
     "build": "react-scripts build",
     "test:unit": "jest",
     "eject": "react-scripts eject",
-    "lint": "eslint .",
+    "lint": "eslint . --ext .js,.jsx",
+    "lint-fix": "npm run lint -- --fix",
     "cypress:open": "cypress open",
     "test:e2e": "cypress run"
   },
