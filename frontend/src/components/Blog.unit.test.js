@@ -21,9 +21,16 @@ describe('<Blog />', () => {
   const mockOnDelete = jest.fn();
 
   beforeEach(() => {
+    const user = { username: 'testuser' };
+    localStorage.setItem('user', JSON.stringify(user));
+
     container = render(
       <Blog blog={blog} onLike={mockOnLike} onDelete={mockOnDelete} />,
     ).container;
+  });
+
+  afterEach(() => {
+    localStorage.clear();
   });
 
   test('renders title and author', () => {
