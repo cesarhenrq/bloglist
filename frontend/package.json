@@ -17,7 +17,7 @@
     "build": "react-scripts build",
     "test:unit": "jest",
     "eject": "react-scripts eject",
-    "eslint": "eslint .",
+    "lint": "eslint .",
     "cypress:open": "cypress open",
     "test:e2e": "cypress run"
   },
