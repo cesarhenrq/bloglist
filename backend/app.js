@@ -23,10 +23,19 @@ mongoose
     logger.error('error connecting to MongoDB:', error.message);
   });
 
+app.use(express.static('../frontend/build'));
 app.use(cors());
 app.use(express.json());
 app.use(middleware.requestLogger);
 app.use(middleware.tokenExtractor);
+
+app.get('/health', (req, res) => {
+  res.send('ok');
+});
+
+app.get('/version', (req, res) => {
+  res.send('0.0.1');
+});
 
 app.use('/api/blogs', middleware.userExtractor, blogsRouter);
 app.use('/api/users', usersRouter);
