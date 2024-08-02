@@ -14,7 +14,7 @@ on:
 jobs:
   frontend:
     runs-on: ubuntu-20.04
-    if: ${{github.event_name == 'push' || github.event_name == 'pull_request' && contains(toJson(github.event.commits.*.message), '#frontend') }}
+    if: ${{contains(toJson(github.event.commits.*.message), '#frontend') }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -93,7 +93,7 @@ jobs:
 
   backend:
     runs-on: ubuntu-20.04
-    if: ${{github.event_name == 'push' || github.event_name == 'pull_request' && contains(toJson(github.event.commits.*.message), '#backend') }}
+    if: ${{contains(toJson(github.event.commits.*.message), '#backend') }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
