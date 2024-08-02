@@ -90,3 +90,61 @@ jobs:
           text: A new version has been deployed
           description: to ${{ vars.PROD_URL }} by ${{ github.actor }}
           webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+
+  backend:
+    runs-on: ubuntu-20.04
+    if: ${{contains(toJson(github.event.commits.*.message), '#backend') }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        working-directory: backend
+        run: npm install
+
+      - name: Check for linting errors
+        working-directory: backend
+        run: npm run lint
+
+      - name: Unit tests
+        working-directory: backend
+        run: npm run test
+
+  deploy:
+    runs-on: ubuntu-20.04
+    needs: [frontend, backend]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Trigger deployment
+        if: github.event_name == 'push'
+        run: curl https://api.render.com/deploy/srv-${{ secrets.RENDER_SERVICE_ID }}?key=${{ secrets.RENDER_API_KEY }}
+
+      - name: Notify deployment
+        uses: rjstone/discord-webhook-notify@v1.0.4
+        if: ${{ github.event_name == 'push' && success() }}
+        with:
+          severity: info
+          text: A new version has been deployed
+          description: to ${{ vars.PROD_URL }} by ${{ github.actor }}
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+
+  tag_release:
+    runs-on: ubuntu-20.04
+    needs: deploy
+    if: ${{github.event_name == 'push' && !contains(toJson(github.event.commits.*.message), '#skip') }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Bump version and push tag
+        uses: anothrNick/github-tag-action@1.70.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEFAULT_BUMP: patch
