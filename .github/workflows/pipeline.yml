@@ -30,6 +30,7 @@ jobs:
         run: echo ${{ steps.get_head_commit_message.outputs.headCommitMsg }}
 
   frontend:
+    needs: check_skip_flags
     runs-on: ubuntu-20.04
     if: ${{ contains(needs.check_skip_flags.outputs.head-commit-message, '#frontend') }}
     steps:
@@ -110,6 +111,7 @@ jobs:
 
   backend:
     runs-on: ubuntu-20.04
+    needs: check_skip_flags
     if: ${{contains(needs.check_skip_flags.outputs.head-commit-message, '#backend') }}
     steps:
       - name: Checkout code
