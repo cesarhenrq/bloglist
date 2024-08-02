@@ -25,20 +25,25 @@ jobs:
           node-version: "20"
 
       - name: Install dependencies
-        run: cd frontend && npm install
+        working-directory: frontend
+        run: npm install
 
       - name: Check for linting errors
-        run: cd frontend && npm run lint
+        working-directory: frontend
+        run: npm run lint
 
       - name: Build
-        run: cd frontend && npm run build
+        working-directory: frontend
+        run: npm run build
 
       - name: Unit tests
-        run: cd frontend && npm run test:unit
+        working-directory: frontend
+        run: npm run test:unit
 
-      - name: E2e tests
+      - name: E2E tests
         uses: cypress-io/github-action@v5
         with:
-          command: cd frontend && npm run test:e2e
+          working-directory: frontend
+          command: npm run test:e2e
           start: npm run start
           wait-on: http://localhost:3000
