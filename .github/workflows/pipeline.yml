@@ -119,13 +119,6 @@ jobs:
           TEST_MONGODB_URI: ${{ secrets.TEST_MONGODB_URI }}
           SECRET: ${{ secrets.SECRET }}
 
-  deploy:
-    runs-on: ubuntu-20.04
-    needs: [frontend, backend]
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
       - name: Trigger deployment
         if: github.event_name == 'push'
         run: curl https://api.render.com/deploy/srv-${{ secrets.RENDER_SERVICE_ID }}?key=${{ secrets.RENDER_API_KEY }}
@@ -139,9 +132,23 @@ jobs:
           description: to ${{ vars.PROD_URL }} by ${{ github.actor }}
           webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
 
-  tag_release:
+  tag_release_frontend:
     runs-on: ubuntu-20.04
-    needs: deploy
+    needs: frontend
+    if: ${{github.event_name == 'push' && !contains(toJson(github.event.commits.*.message), '#skip') }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Bump version and push tag
+        uses: anothrNick/github-tag-action@1.70.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEFAULT_BUMP: patch
+
+  tag_release_backend:
+    runs-on: ubuntu-20.04
+    needs: backend
     if: ${{github.event_name == 'push' && !contains(toJson(github.event.commits.*.message), '#skip') }}
     steps:
       - name: Checkout code
