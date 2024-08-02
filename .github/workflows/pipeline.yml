@@ -26,6 +26,9 @@ jobs:
         id: get_head_commit_message
         run: echo "::set-output name=headCommitMsg::$(git show -s --format=%s)"
 
+      - name: test
+        run: echo ${{ steps.get_head_commit_message.outputs.headCommitMsg }}
+
   frontend:
     runs-on: ubuntu-20.04
     if: ${{ contains(needs.check_skip_flags.outputs.head-commit-message, '#frontend') }}
