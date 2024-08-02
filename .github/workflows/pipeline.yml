@@ -35,3 +35,6 @@ jobs:
 
       - name: Unit tests
         run: cd frontend && npm run test:unit
+
+      - name: E2e tests
+        run: cd frontend && npm run test:e2e
