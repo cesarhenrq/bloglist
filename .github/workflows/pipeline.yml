@@ -12,9 +12,27 @@ on:
       - synchronize
 
 jobs:
+  check_skip_flags:
+    name: Check skip flags
+    runs-on: ubuntu-latest
+    outputs:
+      head-commit-message: ${{ steps.get_head_commit_message.outputs.headCommitMsg }}
+    steps:
+      - name: Get repo
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - name: Print head git commit message
+        id: get_head_commit_message
+        run: echo "::set-output name=headCommitMsg::$(git show -s --format=%s)"
+
+      - name: test
+        run: echo ${{ steps.get_head_commit_message.outputs.headCommitMsg }}
+
   frontend:
+    needs: check_skip_flags
     runs-on: ubuntu-20.04
-    if: ${{contains(toJson(github.event.commits.*.message), '#frontend') }}
+    if: ${{ contains(needs.check_skip_flags.outputs.head-commit-message, '#frontend') }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -93,7 +111,8 @@ jobs:
 
   backend:
     runs-on: ubuntu-20.04
-    if: ${{contains(toJson(github.event.commits.*.message), '#backend') }}
+    needs: check_skip_flags
+    if: ${{contains(needs.check_skip_flags.outputs.head-commit-message, '#backend') }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
