@@ -102,13 +102,13 @@ const App = () => {
           .map((blog) =>
             blog.id === updatedBlog.id
               ? {
-                ...updatedBlog,
-                user: {
-                  username: blog.user.username,
-                  name: blog.user.name,
-                  id: updatedBlog.user,
-                },
-              }
+                  ...updatedBlog,
+                  user: {
+                    username: blog.user.username,
+                    name: blog.user.name,
+                    id: updatedBlog.user,
+                  },
+                }
               : blog,
           )
           .sort((a, b) => b.likes - a.likes),

@@ -36,6 +36,15 @@ jobs:
         working-directory: frontend
         run: npm run build
 
+      - name: Notify Build Failure
+        uses: rjstone/discord-webhook-notify@v1.0.4
+        if: failure()
+        with:
+          severity: error
+          text: Build failed
+          description: The build failed on ${{ github.sha }} by ${{ github.actor }}
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+
       - name: Unit tests
         working-directory: frontend
         run: npm run test:unit
