@@ -49,6 +49,9 @@ jobs:
         working-directory: frontend
         run: npm run test:unit
 
+      - name: Install wait-on
+        run: npm install -g wait-on
+
       - name: Install backend dependencies
         working-directory: backend
         run: npm install
@@ -62,7 +65,10 @@ jobs:
           SECRET: ${{ secrets.SECRET }}
 
       - name: Wait for backend to be ready
-        run: npx wait-on http://localhost:${{ vars.PORT }}
+        run: |
+          echo "Waiting for backend to be ready..."
+          wait-on http://localhost:${{ vars.PORT }}
+        timeout-minutes: 2
 
       - name: E2E tests
         uses: cypress-io/github-action@v5
