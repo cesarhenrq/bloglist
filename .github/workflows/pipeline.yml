@@ -32,7 +32,7 @@ jobs:
   frontend:
     needs: check_skip_flags
     runs-on: ubuntu-20.04
-    if: ${{ contains(needs.check_skip_flags.outputs.head-commit-message, '#frontend') }}
+    if: ${{ contains(needs.check_skip_flags.outputs.head-commit-message, '#frontend') || contains(toJson(github.event.commits.*.message), '#frontend') }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -112,7 +112,7 @@ jobs:
   backend:
     runs-on: ubuntu-20.04
     needs: check_skip_flags
-    if: ${{contains(needs.check_skip_flags.outputs.head-commit-message, '#backend') }}
+    if: ${{contains(needs.check_skip_flags.outputs.head-commit-message, '#backend') || contains(toJson(github.event.commits.*.message), '#backend') }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
